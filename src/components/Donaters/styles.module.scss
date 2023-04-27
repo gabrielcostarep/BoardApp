@@ -1,0 +1,50 @@
+.contentContainer {
+  padding-bottom: 2rem;
+  // margin-top: 5rem;
+
+  h2 {
+    text-align: center;
+    font-size: 1.3rem;
+  }  
+}
+
+.donaters {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin: 1rem 0;
+  max-width: 920px;
+
+  img {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    border: 2px solid #04dd75;
+    transition: all 0.2s;
+  }
+
+  img:hover {
+    transform: scale(1.2);
+  }
+}
+
+.moreDonaters {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #141a29;
+  color: #FFF;
+  padding: 0.5rem 1rem;
+  border: 0;
+  border-radius: 10px;
+  margin: 0 auto;
+
+  svg:first-child {
+    margin-right: 0.3rem;
+  }
+
+  &:hover {
+    filter: brightness(0.9);
+  }
+}
