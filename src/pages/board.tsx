@@ -1,4 +1,5 @@
 import Head from 'next/head'
+import Link from 'next/link'
 import { GetServerSideProps } from 'next'
 import { getSession } from 'next-auth/react'
 
@@ -10,19 +11,30 @@ import styles from '../styles/board.module.scss'
 import { SupportButton } from '../components/SupportButton'
 
 import { db } from '@/services/firebaseConnection'
-import { collection, addDoc } from 'firebase/firestore'
-import { format } from 'date-fns'
+import { collection, addDoc, getDocs, query, orderBy, where, doc, deleteDoc } from 'firebase/firestore'
+
+import format from 'date-fns/format'
+import ptBR from 'date-fns/locale/pt-BR';
+
+type TaskList = {
+  id: string;
+  created: string | Date;
+  tarefa: string;
+  userId: string;
+  name: string;
+}
 
 interface BoardProps {
   user: {
     name: string;
     id: string;
   }
+  data: string;
 }
 
-export default function Board({ user }: BoardProps){
+export default function Board({ user, data }: BoardProps){
   const [input, setInput] = useState('')
-  const [taskList, setTaskList] = useState([])
+  const [taskList, setTaskList] = useState<TaskList[]>(JSON.parse(data))
 
   async function handleAddTask(e: FormEvent) {
     e.preventDefault();
@@ -42,17 +54,29 @@ export default function Board({ user }: BoardProps){
       let data = {
         id: doc.id,
         created: new Date(),
-        createdFormated: format(new Date(), 'dd MMMM yyyy'),
         tarefa: input,
         userId: user.id,
         name: user.name
       };
 
-      // ajeitar essa tipagem
-
       setTaskList([...taskList, data]);
       setInput('')
-    }) 
+    })
+    .catch ((err) => {
+      console.log('Erro ao cadastrar: ' + err)
+    })
+  }
+
+  async function handleDelete(id: string) {
+    await deleteDoc(doc(db, "tarefas", id))
+    .then(() => {
+      console.log('Deletado com Sucesso')
+      let taskDeleted = taskList.filter(item => item.id !== id);
+      setTaskList(taskDeleted)
+    })
+    .catch((err) => {
+      console.log(err)
+    })
   }
 
   return (
@@ -75,30 +99,34 @@ export default function Board({ user }: BoardProps){
               </button>
           </form>
 
-          <h1>Você tem 2 tarefas!</h1>
+          <h1>Você tem {taskList.length} {taskList.length === 1 ? 'tarefa!' : 'tarefas!'}</h1>
 
           <section>
-            <article className={styles.taskList}>
-              <p>Aprender criar projetos usando Next JS e aplicando firebase como back.</p>
-              <div className={styles.actions}>
-                <div>
-                  <div>
-                    <FiCalendar size={20} color='#ffb800'/>
-                    <time>24 Abril 2023</time>
+            {taskList.map(task => {
+              return (
+                <article className={styles.taskList} key={task.id}>
+                  <Link href={`/board/${task.id}`}><p>{task.tarefa}</p></Link>
+                  <div className={styles.actions}>
+                    <div>
+                      <div>
+                        <FiCalendar size={20} color='#ffb800'/>
+                        <time>{format(new Date(task.created.seconds * 1e3 + task.created.nanoseconds / 1e6), 'PPPP', {locale: ptBR})}</time>
+                      </div>
+                      <button>
+                        <FiEdit2 size={20} color='#fff'/>
+                        <span>Editar</span>
+                      </button>
+                    </div>
+    
+                    <button onClick={() => handleDelete(task.id)}>
+                      <FiTrash size={20} color='#ff3636'/>
+                      <span>Excluir</span>
+                    </button>
                   </div>
-                  <button>
-                    <FiEdit2 size={20} color='#fff'/>
-                    <span>Editar</span>
-                  </button>
-                </div>
-
-                <button>
-                  <FiTrash size={20} color='#ff3636'/>
-                  <span>Excluir</span>
-                </button>
-              </div>
-            </article>
+                </article>
+            )})}
           </section>
+
         </section>
 
         <article className={styles.vipContainer}>
@@ -129,14 +157,23 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
     }
   }
 
+  const q = query(collection(db, "tarefas"), where("userId", "==", session?.session.user.email), orderBy('created', 'asc'));
+  const tasks = await getDocs(q);
+  const data: any = []
+
+  tasks.forEach((doc) => {
+    data.push({...doc.data(), id: doc.id})
+  });
+
   const user = {
-    name: session?.session?.user?.name,
-    id: session?.session?.user?.email,
+    name: session?.session.user.name,
+    id: session?.session.user.email,
   }
 
   return {
     props: {
-      user
+      user,
+      data: JSON.stringify(data)
     }
   }
 }
