@@ -103,6 +103,11 @@ export default function Board({ user, data }: BoardProps){
 
           <section>
             {taskList.map(task => {
+              let dateNow;
+              task.created.seconds * 1e3 + task.created.nanoseconds / 1e6
+              ? dateNow = format(new Date(task.created.seconds * 1e3 + task.created.nanoseconds / 1e6), 'PPPP', {locale: ptBR})
+              : dateNow = format(new Date(), 'PPPP', {locale: ptBR})
+
               return (
                 <article className={styles.taskList} key={task.id}>
                   <Link href={`/board/${task.id}`}><p>{task.tarefa}</p></Link>
@@ -110,7 +115,7 @@ export default function Board({ user, data }: BoardProps){
                     <div>
                       <div>
                         <FiCalendar size={20} color='#ffb800'/>
-                        <time>{format(new Date(task.created.seconds * 1e3 + task.created.nanoseconds / 1e6), 'PPPP', {locale: ptBR})}</time>
+                        <time>{dateNow}</time>
                       </div>
                       <button>
                         <FiEdit2 size={20} color='#fff'/>
