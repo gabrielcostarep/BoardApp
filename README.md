@@ -14,8 +14,6 @@ Este projeto foi desenvolvido com as seguintes tecnologias:
 - ✔️ NextJS
 - ✔️ TypeScript
 - ✔️ Sass
-
-<br>
   
 ## ✅ Desafios
 
