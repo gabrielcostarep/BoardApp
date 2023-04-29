@@ -14,8 +14,6 @@ import ptBR from 'date-fns/locale/pt-BR';
 
 import styles from './board.module.scss'
 
-import { SupportButton } from '../../components/SupportButton'
-
 type TaskList = {
   id: string;
   created: string | Date;
@@ -170,19 +168,7 @@ export default function Board({ user, data }: BoardProps){
           </section>
 
         </section>
-
-        <article className={styles.vipContainer}>
-          <h3>Obrigado por apoiar esse prejeto.</h3>
-          <div>
-            <FiClock size={28} color='#fff'/>
-            <time>
-              Última doação foi a 3 dias.
-            </time>
-          </div>
-        </article>
       </main>
-
-      <SupportButton />
     </>
   )
 }

@@ -1,8 +1,10 @@
 import { GetStaticProps } from 'next'
 import Head from 'next/head'
-import { Donaters } from '../components/Donaters'
 
 import styles from '../styles/index.module.scss'
+
+import Image from 'next/image'
+import boardUser from '../../public/images/board-user.svg'
 
 export default function Home() {
   return (
@@ -12,7 +14,7 @@ export default function Home() {
       </Head>
 
       <main className={styles.contentContainer}>
-        <img className={styles.img} src="/images/board-user.svg" alt="ferramenta board" />
+        <Image className={styles.img} src={boardUser} alt="ferramenta board" />
 
         <section className={styles.callToAction}>
           <h1>Escreva, planeje e organize-se...</h1>
@@ -20,16 +22,12 @@ export default function Home() {
             <span>100% Gratuito</span> e online
           </p>
         </section>
-
-        <Donaters />
       </main>
     </>
   )
 }
 
 export const getStaticProps: GetStaticProps = async () => {
-  
-
   return {
     props: {},
     revalidate: 60 * 60
