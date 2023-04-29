@@ -17,7 +17,8 @@ Este projeto foi desenvolvido com as seguintes tecnologias:
   
 ## ✅ Desafios
 
-asfasfasf
+Neste projeto pude utilizar alguns benefícios do NextJS, como o uso de rotas utilizando a pasta page. Utilizei algumas bibliotecas como o Date fns e o React Icons.
+Utilizei a funcionalidade de login com o GitHub para assim criar e ver as tarefas. Utilizei o Firestore Database do Firebase para guardar as tarefas.
 
 <br>
 
